@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { CRUDModule } from '../crud.module';
 import { IEntity } from '@smendivil/entity';
-import { BaseCRUDRepository } from '../repositories/base.crud.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 class TestEntity implements IEntity {
     id: string;
@@ -15,36 +15,28 @@ class TestEntity implements IEntity {
     }
 }
 
-class TestRepository extends BaseCRUDRepository<TestEntity> {
-    async create(entity: TestEntity): Promise<TestEntity> {
-        return entity;
-    }
-    async findById(id: string): Promise<TestEntity | null> {
-        return new TestEntity(id);
-    }
-    async update(id: string, entity: Partial<TestEntity>): Promise<TestEntity | null> {
-        return { ...new TestEntity(id), ...entity };
-    }
-    async delete(id: string): Promise<boolean> {
-        return true;
-    }
-    async findAll(): Promise<TestEntity[]> {
-        return [new TestEntity('1')];
-    }
-}
-
 describe('CRUDModule', () => {
     it('should provide CRUD services', async () => {
         const moduleRef = await Test.createTestingModule({
-            imports: [CRUDModule.forRoot(TestEntity, TestRepository)],
+            imports: [
+                TypeOrmModule.forRoot({
+                    type: 'sqlite',
+                    database: ':memory:',
+                    entities: [TestEntity],
+                    synchronize: true,
+                }),
+                CRUDModule.forRoot(TestEntity),
+            ],
         }).compile();
 
         expect(moduleRef.get('ICRUDService')).toBeDefined();
         expect(moduleRef.get('ICRUDRepository')).toBeDefined();
     });
 
-    it('should export ICRUDService', async () => {
-        const module = CRUDModule.forRoot(TestEntity, TestRepository);
+    it('should export ICRUDService', () => {
+        const module = CRUDModule.forRoot(TestEntity);
         expect(module.exports).toContain('ICRUDService');
     });
-})
+});
+
+
