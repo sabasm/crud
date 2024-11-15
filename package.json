@@ -1,0 +1,54 @@
+{
+  "name": "@smendivil/crud",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "postbuild": "npm run test:cov",
+    "test": "jest --config jest.config.js",
+    "test:watch": "jest --watch --config jest.config.js",
+    "test:cov": "jest --coverage --config jest.config.js",
+    "prepublishOnly": "npm run build && npm run test:cov",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags",
+    "publish:public": "npm publish --access public"
+  },
+  "license": "MIT",
+  "keywords": [
+    "CRUD",
+    "typescript",
+    "nestjs",
+    "repository-pattern"
+  ],
+  "author": "Sabás Mendívil",
+  "description": "Reusable CRUD module for scalable applications",
+  "dependencies": {
+    "@nestjs/common": "^10.4.6",
+    "@nestjs/typeorm": "^10.0.2",
+    "@smendivil/entity": "^1.0.2",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^10.4.7",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  }
+}
